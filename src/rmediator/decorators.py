@@ -26,12 +26,12 @@ def request_handler(cls):
 
     if "request" not in cls.__dict__:
         raise ValueError(
-            f"Request class cannot be registered, {cls} must contain attribute 'request' to signify the reequest it handles."
+            f"Request handler class cannot be registered, {cls} must contain attribute 'request' to signify the reequest it handles."
         )
 
     if "response" not in cls.__dict__:
         raise ValueError(
-            f"Request class cannot be registered, {cls} must contain attribute 'response' to signify the response it sends after handling request."
+            f"Request handler class cannot be registered, {cls} must contain attribute 'response' to signify the response it sends after handling request."
         )
 
     Mediator().register_handler(cls)

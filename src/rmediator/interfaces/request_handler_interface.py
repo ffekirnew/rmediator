@@ -2,12 +2,6 @@ from abc import ABCMeta, abstractmethod
 from typing import Generic, Type, TypeVar
 
 TResponse = TypeVar("TResponse")
-
-
-class RequestInterface(Generic[TResponse], metaclass=ABCMeta):
-    response: Type[TResponse]
-
-
 TRequest = TypeVar("TRequest")
 
 

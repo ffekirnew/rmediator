@@ -1,6 +1,7 @@
 from threading import Lock
+from typing import Any
 
-from rmediator.interfaces import RequestHandlerInterface, RequestInterface
+from src.rmediator.interfaces import RequestHandlerInterface, RequestInterface
 
 
 class SingletonMeta(type):
@@ -16,19 +17,17 @@ class SingletonMeta(type):
 
 
 class Mediator(metaclass=SingletonMeta):
-    _instance = None
-
     def __init__(self) -> None:
-        self.requests = {}
-        self.request_handlers = {}
+        self.__requests = {}
+        self.__request_handlers = {}
 
-    def send(self, request: RequestInterface) -> RequestInterface.response:  # type: ignore
-        if type(request) not in self.requests:
+    def send(self, request: RequestInterface) -> Any:
+        if type(request) not in self.__requests:
             raise ValueError(
                 f"Request cannot be handled, Request {type(request)} not registered."
             )
 
-        handler = self.request_handlers.get(type(request))
+        handler = self.__request_handlers.get(type(request))
         if not handler:
             raise ValueError(
                 f"Request cannot be handled, No handler has been registered for {type(request)}."
@@ -37,23 +36,23 @@ class Mediator(metaclass=SingletonMeta):
         return handler.handle(request)
 
     def register_request(self, request: type[RequestInterface]) -> None:
-        self.requests[request] = request.response  # type: ignore
+        self.__requests[request] = request.response  # type: ignore
 
     def register_handler(self, handler: type[RequestHandlerInterface]) -> None:
         request, response = handler.request, handler.response  # type: ignore
-        if request not in self.requests:
+        if request not in self.__requests:
             raise ValueError(
                 f"Handler cannot be registered, Request {request} has been not registered."
             )
 
-        if response != self.requests[request]:
+        if response != self.__requests[request]:
             raise ValueError(
-                f"Handler cannot be registered, Handler response {response} does not match request response {self.requests[request]}."
+                f"Handler cannot be registered, Handler response {response} does not match request response {self.__requests[request]}."
             )
 
-        if request in self.request_handlers:
+        if request in self.__request_handlers:
             raise ValueError(
                 f"Handler cannot be registered, Another handler for request type {request} has already been registered."
             )
 
-        self.request_handlers[request] = handler()
+        self.__request_handlers[request] = handler()

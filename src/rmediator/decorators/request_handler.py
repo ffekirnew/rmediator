@@ -18,7 +18,7 @@ def request_handler(cls):
             f"Request handler class cannot be registered, {cls} must contain attribute 'response' to signify the response it sends after handling request."
         )
 
-    if cls.request == None:  # type: ignore
+    if cls.request is None:  # type: ignore
         raise ValueError(
             f"Request handler class cannot be registered, {cls} must contain attribute 'request' to signify the request it handles."
         )

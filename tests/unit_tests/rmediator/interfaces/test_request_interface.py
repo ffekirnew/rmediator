@@ -1,20 +1,18 @@
-import unittest
-
 from src.rmediator.interfaces import RequestInterface
 
 
-class TestRequestInterface(unittest.TestCase):
+class TestRequestInterface:
     def test_request_interface_invalid_not_subclass(self):
         class InvalidRequest:
             pass
 
-        self.assertFalse(issubclass(InvalidRequest, RequestInterface))
-        self.assertFalse(hasattr(InvalidRequest, "response"))
+        assert issubclass(InvalidRequest, RequestInterface) is False
+        assert hasattr(InvalidRequest, "response") is False
 
     def test_request_interface_valid(self):
         class ValidRequest(RequestInterface):
             response = bool
 
-        self.assertTrue(issubclass(ValidRequest, RequestInterface))
-        self.assertTrue(hasattr(ValidRequest, "response"))
-        self.assertEqual(ValidRequest.response, bool)  # type: ignore
+        assert issubclass(ValidRequest, RequestInterface) is True
+        assert hasattr(ValidRequest, "response") is True
+        assert ValidRequest.response is bool  # type: ignore

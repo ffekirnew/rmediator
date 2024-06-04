@@ -35,22 +35,25 @@ class Mediator(metaclass=SingletonMeta):
         self.__check_request_validity(request_type)
         self.__check_request_handler_validity(type(handler))
 
-        if request_type in self.__request_handlers:
+        if handler.response is not request_type.response:  # type: ignore
             raise ValueError(
-                f"Handler cannot be registered, Another handler for request type {request_type} has already been registered. Check {type(self.__request_handlers[request_type])}."
+                f"Handler cannot be registered; handler response {handler.response} does not match request response {request_type.response}."
             )
 
-        if handler.response != request_type.response:  # type: ignore
-            raise ValueError(
-                f"Handler cannot be registered, Handler response {handler.response} does not match request response {request_type.response}."
-            )
+        if request_type in self.__request_handlers:
+            old_handler = self.__request_handlers[request_type]
+
+            if type(handler) is not type(old_handler):
+                raise ValueError(
+                    f"Handler cannot be registered; another handler for request type {request_type} has already been registered. Check {type(self.__request_handlers[request_type])}."
+                )
 
         self.__request_handlers[request_type] = handler
 
     def __check_request_validity(self, request_type: type[Request]) -> None:
         if not hasattr(request_type, "rmediator_decorated_request"):
             raise ValueError(
-                f"Handler cannot be registered, The request {request_type} class has not been decorated using @request."
+                f"Handler cannot be registered; the request {request_type} class has not been decorated using @request."
             )
 
     def __check_request_handler_validity(
@@ -58,5 +61,5 @@ class Mediator(metaclass=SingletonMeta):
     ) -> None:
         if not hasattr(handler_type, "rmediator_decorated_request_handler"):
             raise ValueError(
-                f"Handler cannot be registered, The request handler {type(handler_type)} class has not been decorated using @request_handler."
+                f"Handler cannot be registered; the request handler {type(handler_type)} class has not been decorated using @request_handler."
             )

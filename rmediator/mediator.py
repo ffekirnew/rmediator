@@ -1,5 +1,5 @@
 from threading import Lock
-from typing import Any
+from typing import Any, Dict
 
 from rmediator.types import Request, RequestHandler
 
@@ -18,22 +18,16 @@ class SingletonMeta(type):
 
 class Mediator(metaclass=SingletonMeta):
     def __init__(self) -> None:
-        self.__requests = {}
-        self.__request_handlers = {}
+        self.__request_handlers: Dict[type, RequestHandler] = {}
 
-    def send(self, req: RequestHandler) -> Any:
-        if type(req) not in self.__requests:
-            raise ValueError(
-                f"Request cannot be handled, Request {type(req)} not registered."
-            )
-
-        handler = self.__request_handlers.get(type(req))
+    def send(self, request: Request) -> Any:
+        handler = self.__request_handlers.get(type(request))
         if not handler:
             raise ValueError(
-                f"Request cannot be handled, No handler has been registered for {type(req)}."
+                f"Request cannot be handled, No handler has been registered for {type(request)}."
             )
 
-        return handler.handle(req)
+        return handler.handle(request)
 
     def register_handler(
         self, request_type: type[Request], handler: RequestHandler
@@ -43,7 +37,7 @@ class Mediator(metaclass=SingletonMeta):
 
         if request_type in self.__request_handlers:
             raise ValueError(
-                f"Handler cannot be registered, Another handler for request type {request_type} has already been registered. Check {type(handler)}"
+                f"Handler cannot be registered, Another handler for request type {request_type} has already been registered. Check {type(self.__request_handlers[request_type])}."
             )
 
         if handler.response != request_type.response:  # type: ignore

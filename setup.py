@@ -19,8 +19,8 @@ setuptools.setup(
         # 'Funding': '',
         # 'Say Thanks!': '',
     },
-    package_dir={"": "src"},
-    packages=setuptools.find_packages(where="src"),
+    package_dir={"": "rmediator"},
+    packages=setuptools.find_packages(where="rmediator"),
     classifiers=[
         # see https://pypi.org/classifiers/
         "Development Status :: 5 - Production/Stable",

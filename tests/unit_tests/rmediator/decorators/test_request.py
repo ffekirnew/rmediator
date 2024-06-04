@@ -1,6 +1,6 @@
 import pytest
 
-from src.rmediator.decorators import request
+from rmediator.decorators import request
 
 
 class TestRequest:

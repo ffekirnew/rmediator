@@ -1,20 +1,18 @@
 import pytest
 
 from src.rmediator.decorators import request
-from src.rmediator.interfaces import RequestInterface
 
 
 class TestRequest:
-    def test_request_invalid_not_subclass(self):
-        class InvalidRequest:
-            pass
-
+    def test__request__invalid_no_response__raises_value_error(self):
         with pytest.raises(ValueError):
-            request(InvalidRequest)
 
-    def test_request_invalid_does_not_have_response(self):
-        class InvalidRequest(RequestInterface):
-            pass
+            @request
+            class InvalidRequest:
+                pass
 
-        with pytest.raises(ValueError):
-            request(InvalidRequest)
+    def test__request__valid(self):
+
+        @request
+        class ValidRequest:
+            response = str

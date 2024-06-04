@@ -1,19 +1,11 @@
 import pytest
 
 from src.rmediator.decorators import request, request_handler
-from src.rmediator.interfaces import RequestHandlerInterface, RequestInterface
 
 
 class TestRequestHandler:
-    def test__request_handler__not_subclass__raises_value_error(self):
-        with pytest.raises(ValueError):
-
-            @request_handler
-            class InvalidRequestHandler:
-                pass
-
     def test__request_handler__no_request_attribute__raises_value_error(self):
-        class InvalidRequestHandler(RequestHandlerInterface):
+        class InvalidRequestHandler:
             pass
 
         with pytest.raises(ValueError):
@@ -24,9 +16,7 @@ class TestRequestHandler:
     ):
         request_class = get_valid_request
 
-        print("Here:", request_class)
-
-        class InvalidRequestHandler(RequestHandlerInterface):
+        class InvalidRequestHandler:
             request = request_class
 
         with pytest.raises(ValueError):
@@ -37,7 +27,7 @@ class TestRequestHandler:
     ):
         request_class, response_class = get_valid_request, get_valid_request.response
 
-        class InvalidRequestHandler(RequestHandlerInterface):
+        class InvalidRequestHandler:
             request = request_class
             response = response_class
 
@@ -49,7 +39,7 @@ class TestRequestHandler:
     ):
         request_class, response_class = get_valid_request, get_valid_request.response
 
-        class InvalidRequestHandler(RequestHandlerInterface):
+        class InvalidRequestHandler:
             request = request_class
             response = response_class
 
@@ -64,7 +54,7 @@ class TestRequestHandler:
     ):
         request_class, response_class = get_valid_request, get_valid_request.response
 
-        class InvalidRequestHandler(RequestHandlerInterface):
+        class InvalidRequestHandler:
             request = request_class
             response = response_class
 
@@ -78,7 +68,7 @@ class TestRequestHandler:
 @pytest.fixture
 def get_valid_request(get_response):
     @request
-    class Request(RequestInterface):
+    class Request:
         response = get_response
 
     return Request

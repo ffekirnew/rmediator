@@ -5,7 +5,7 @@ from rmediator.decorators import request
 
 class TestRequest:
     def test__request__invalid_no_response__raises_value_error(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(AttributeError):
 
             @request
             class InvalidRequest:

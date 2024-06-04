@@ -1,7 +1,7 @@
 from threading import Lock
 from typing import Any
 
-from src.rmediator.types import Request, RequestHandler
+from rmediator.types import Request, RequestHandler
 
 
 class SingletonMeta(type):

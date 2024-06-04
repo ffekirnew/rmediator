@@ -1,7 +1,7 @@
 from threading import Lock
 from typing import Any
 
-from src.rmediator.interfaces import RequestHandlerInterface, RequestInterface
+from src.rmediator.types import Request, RequestHandler
 
 
 class SingletonMeta(type):
@@ -21,38 +21,48 @@ class Mediator(metaclass=SingletonMeta):
         self.__requests = {}
         self.__request_handlers = {}
 
-    def send(self, request: RequestInterface) -> Any:
-        if type(request) not in self.__requests:
+    def send(self, req: RequestHandler) -> Any:
+        if type(req) not in self.__requests:
             raise ValueError(
-                f"Request cannot be handled, Request {type(request)} not registered."
+                f"Request cannot be handled, Request {type(req)} not registered."
             )
 
-        handler = self.__request_handlers.get(type(request))
+        handler = self.__request_handlers.get(type(req))
         if not handler:
             raise ValueError(
-                f"Request cannot be handled, No handler has been registered for {type(request)}."
+                f"Request cannot be handled, No handler has been registered for {type(req)}."
             )
 
-        return handler.handle(request)
+        return handler.handle(req)
 
-    def register_request(self, request: type[RequestInterface]) -> None:
-        self.__requests[request] = request.response  # type: ignore
+    def register_handler(
+        self, request_type: type[Request], handler: RequestHandler
+    ) -> None:
+        self.__check_request_validity(request_type)
+        self.__check_request_handler_validity(type(handler))
 
-    def register_handler(self, handler: type[RequestHandlerInterface]) -> None:
-        request, response = handler.request, handler.response  # type: ignore
-        if request not in self.__requests:
+        if request_type in self.__request_handlers:
             raise ValueError(
-                f"Handler cannot be registered, Request {request} has been not registered."
+                f"Handler cannot be registered, Another handler for request type {request_type} has already been registered. Check {type(handler)}"
             )
 
-        if response != self.__requests[request]:
+        if handler.response != request_type.response:  # type: ignore
             raise ValueError(
-                f"Handler cannot be registered, Handler response {response} does not match request response {self.__requests[request]}."
+                f"Handler cannot be registered, Handler response {handler.response} does not match request response {request_type.response}."
             )
 
-        if request in self.__request_handlers:
+        self.__request_handlers[request_type] = handler
+
+    def __check_request_validity(self, request_type: type[Request]) -> None:
+        if not hasattr(request_type, "rmediator_decorated_request"):
             raise ValueError(
-                f"Handler cannot be registered, Another handler for request type {request} has already been registered."
+                f"Handler cannot be registered, The request {request_type} class has not been decorated using @request."
             )
 
-        self.__request_handlers[request] = handler()
+    def __check_request_handler_validity(
+        self, handler_type: type[RequestHandler]
+    ) -> None:
+        if not hasattr(handler_type, "rmediator_decorated_request_handler"):
+            raise ValueError(
+                f"Handler cannot be registered, The request handler {type(handler_type)} class has not been decorated using @request_handler."
+            )

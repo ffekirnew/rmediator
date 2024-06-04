@@ -4,6 +4,11 @@ test:
 	@echo "Running tests..."
 	@pytest
 
+test-coverage:
+	@echo "Running tests with coverage..."
+	@coverage run -m pytest -q
+	@coverage report -m
+
 build:
 	@echo "Building package..."
 	@python setup.py sdist

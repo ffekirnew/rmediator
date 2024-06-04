@@ -1,2 +1,2 @@
-from src.rmediator.types.request import Request
-from src.rmediator.types.request_handler import RequestHandler
+from rmediator.types.request import Request
+from rmediator.types.request_handler import RequestHandler

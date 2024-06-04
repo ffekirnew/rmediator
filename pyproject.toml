@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rmediator"
-version = "0.1.7"
+version = "0.1.0"
 description = "Request mediator"
 authors = ["ffekirnew <ffekirnew0808@gmail.com>"]
 license = "MIT"

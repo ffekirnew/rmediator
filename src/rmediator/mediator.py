@@ -1,5 +1,7 @@
 from threading import Lock
-from typing import Any, Dict
+from typing import Annotated, Dict
+
+from typing_extensions import Doc
 
 from rmediator.types import Request, RequestHandler
 
@@ -50,7 +52,13 @@ class Mediator(metaclass=SingletonMeta):
         """
         self.__request_handlers: Dict[type, RequestHandler] = {}
 
-    def send(self, request: Request) -> Any:
+    def send(
+        self,
+        request: Annotated[
+            Request,
+            Doc("The request object to be handled."),
+        ],
+    ):
         """
         Sends a request to its corresponding handler and returns the handler's response.
 
@@ -72,7 +80,15 @@ class Mediator(metaclass=SingletonMeta):
         return handler.handle(request)
 
     def register_handler(
-        self, request_type: type[Request], handler: RequestHandler
+        self,
+        request_type: Annotated[
+            type[Request],
+            Doc("The type of the request to be handled."),
+        ],
+        handler: Annotated[
+            RequestHandler,
+            Doc("The handler to process the request."),
+        ],
     ) -> None:
         """
         Registers a handler for a specific request type.

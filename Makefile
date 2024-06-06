@@ -1,20 +1,29 @@
-.phony: test build upload
+.phony: format lint test test-coverage build upload
+
+format:
+	@echo "Make: Running formatters..."
+	@isort src
+	@black src
+
+lint:
+	@echo "Make: Running linters..."
+	@ruff check src
 
 test:
-	@echo "Running tests..."
+	@echo "Make: Running tests..."
 	@pytest
 
 test-coverage:
-	@echo "Running tests with coverage..."
+	@echo "Make: Running tests with coverage..."
 	@coverage run -m pytest -q
 	@coverage report -m
 
 build:
-	@echo "Building package..."
+	@echo "Make: Building package..."
 	@python setup.py sdist
 
 upload:
-	@echo "Uploading package..."
+	@echo "Make: Uploading package..."
 	@twine upload dist/*
 	@rm -rf dist
 	@rm -rf build

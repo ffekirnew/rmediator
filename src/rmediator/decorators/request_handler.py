@@ -1,17 +1,29 @@
 import inspect
-from typing import Union
+from typing import Annotated, Union
+
+from typing_extensions import Doc
 
 
-def request_handler(request_type: type, response_type: Union[type, None]):
+def request_handler(
+    request_type: Annotated[
+        type, Doc("The type of the request that the handler should process.")
+    ],
+    response_type: Annotated[
+        Union[type, None],
+        Doc(
+            "The type of the response that the handler should return, or None if no response is expected."
+        ),
+    ],
+):
     """
     A decorator to register a request handler class with specified request and response types.
 
     Args:
-        request_type (type): The type of the request that the handler should process.
-        response_type (Union[type, None]): The type of the response that the handler should return, or None if no response is expected.
+        request_type (Annotated[type, Doc]): The type of the request that the handler should process.
+        response_type (Annotated[Union[type, None], Doc]): The type of the response that the handler should return, or None if no response is expected.
 
     Returns:
-        type: The decorated class.
+        decorator: The decorator function.
 
     Raises:
         AttributeError: If the request type is None, if the class does not contain a 'handle' method,
@@ -20,11 +32,13 @@ def request_handler(request_type: type, response_type: Union[type, None]):
                     or if the return type of the 'handle' method does not match the response type.
 
     Example:
-        @request_handler(RequestType, ResponseType)
-        class MyHandler:
-            def handle(self, request: RequestType) -> ResponseType:
-                # Handle the request and return a response
-                pass
+    ```python
+    @request_handler(RequestType, ResponseType)
+    class MyHandler:
+        def handle(self, request: RequestType) -> ResponseType:
+            # Handle the request and return a response
+            pass
+    ```
     """
 
     def decorator(cls: type):

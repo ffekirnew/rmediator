@@ -20,7 +20,17 @@ class TestMediator:
         )
         response = mediator.send(get_valid_request())
 
-        assert type(response) is get_valid_request.response
+        assert type(response) is get_valid_request._response
+
+    def test__mediator__valid_duplicate_handlers_registration__successful(
+        self, mediator, get_valid_request, get_valid_request_handler_first_type
+    ):
+        mediator.register_handler(
+            get_valid_request, get_valid_request_handler_first_type()
+        )
+        mediator.register_handler(
+            get_valid_request, get_valid_request_handler_first_type()
+        )
 
     def test__mediator__undecorated_request__raises_value_error(
         self, mediator, get_undecorated_request, get_valid_request_handler_first_type
@@ -43,16 +53,6 @@ class TestMediator:
     ):
         with pytest.raises(ValueError):
             mediator.register_handler(str, bool)
-
-    def test__mediator__valid_duplicate_handlers_registration__successful(
-        self, mediator, get_valid_request, get_valid_request_handler_first_type
-    ):
-        mediator.register_handler(
-            get_valid_request, get_valid_request_handler_first_type()
-        )
-        mediator.register_handler(
-            get_valid_request, get_valid_request_handler_first_type()
-        )
 
     def test__mediator__invalid_same_request_different_handlers_registration__raises_value_error(
         self,
@@ -106,10 +106,18 @@ def mediator():
 
 
 @pytest.fixture
+def get_response():
+    class Response:
+        pass
+
+    return Response
+
+
+@pytest.fixture
 def get_valid_request(get_response):
-    @request
+    @request(get_response)
     class Request:
-        response = get_response
+        pass
 
     return Request
 
@@ -123,19 +131,10 @@ def get_undecorated_request(get_response):
 
 
 @pytest.fixture
-def get_response():
-    class Response:
-        pass
-
-    return Response
-
-
-@pytest.fixture
 def get_valid_request_handler_first_type(get_valid_request, get_response):
-    @request_handler
+    @request_handler(get_valid_request, get_response)
     class RequestHandler:
-        request = get_valid_request
-        response = get_response
+        pass
 
         def handle(self, request: get_valid_request) -> get_response:
             return get_response()
@@ -169,7 +168,7 @@ def get_none_request_request_handler(get_valid_request, get_response):
 
 @pytest.fixture
 def get_valid_request_handler_second_type(get_valid_request, get_response):
-    @request_handler
+    @request_handler(get_valid_request, get_response)
     class RequestHandler:
         request = get_valid_request
         response = get_response
@@ -182,10 +181,8 @@ def get_valid_request_handler_second_type(get_valid_request, get_response):
 
 @pytest.fixture
 def get_valid_request_handler_third_type(get_valid_request, get_response):
-    @request_handler
+    @request_handler(get_valid_request, None)
     class RequestHandler:
-        request = get_valid_request
-        response = None
 
         def handle(self, request: get_valid_request) -> None:
             pass

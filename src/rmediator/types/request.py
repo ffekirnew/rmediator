@@ -1,8 +1,8 @@
-from abc import ABCMeta
-from typing import TypeVar
+from abc import ABC
+from typing import Generic, TypeVar
 
 TResponse = TypeVar("TResponse")
 
 
-class Request(metaclass=ABCMeta):
-    response = TResponse
+class Request(Generic[TResponse], ABC):
+    _response = TResponse

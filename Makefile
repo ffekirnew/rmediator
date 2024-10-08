@@ -20,7 +20,7 @@ test-coverage:
 
 build:
 	@echo "Make: Building package..."
-	@python setup.py sdist
+	@python3 -m build --wheel
 
 upload:
 	@echo "Make: Uploading package..."

@@ -1,5 +1,5 @@
 from threading import Lock
-from typing import Annotated, Dict
+from typing import Annotated
 
 from typing_extensions import Doc
 
@@ -43,14 +43,15 @@ class Mediator(metaclass=SingletonMeta):
     Mediator class to handle the registration and dispatching of requests to their corresponding handlers.
 
     Attributes:
-        __request_handlers (Dict[type, RequestHandler]): A dictionary mapping request types to their handlers.
+        __request_handlers (dict[type, RequestHandler]): A dictionary mapping request types to their handlers.
     """
 
     def __init__(self) -> None:
         """
         Initializes a new instance of the Mediator class.
         """
-        self.__request_handlers: Dict[type, RequestHandler] = {}
+        self._request_handlers: dict[type, RequestHandler] = {}
+        self._lock = Lock()
 
     def send(
         self,
@@ -71,7 +72,7 @@ class Mediator(metaclass=SingletonMeta):
         Raises:
             ValueError: If no handler has been registered for the type of the request.
         """
-        handler = self.__request_handlers.get(type(request))
+        handler = self._request_handlers.get(type(request))
         if not handler:
             raise ValueError(
                 f"Request cannot be handled; no handler has been registered for {type(request)}."
@@ -109,15 +110,15 @@ class Mediator(metaclass=SingletonMeta):
                 f"Handler cannot be registered; handler response {handler._response} does not match request response {request_type._response}."
             )
 
-        if request_type in self.__request_handlers:
-            old_handler = self.__request_handlers[request_type]
+        if request_type in self._request_handlers:
+            old_handler = self._request_handlers[request_type]
 
             if type(handler) is not type(old_handler):
                 raise ValueError(
-                    f"Handler cannot be registered; another handler for request type {request_type} has already been registered. Check {type(self.__request_handlers[request_type])}."
+                    f"Handler cannot be registered; another handler for request type {request_type} has already been registered. Check {type(self._request_handlers[request_type])}."
                 )
 
-        self.__request_handlers[request_type] = handler
+        self._request_handlers[request_type] = handler
 
     def __check_request_validity(self, request_type: type) -> None:
         """

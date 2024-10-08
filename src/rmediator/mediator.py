@@ -105,7 +105,7 @@ class Mediator(metaclass=SingletonMeta):
         self.__check_request_validity(request_type)
         self.__check_request_handler_validity(type(handler))
 
-        if handler._response is not request_type._response:  # type: ignore
+        if handler._response != request_type._response:  # type: ignore
             raise ValueError(
                 f"Handler cannot be registered; handler response {handler._response} does not match request response {request_type._response}."
             )

@@ -20,9 +20,10 @@ test-coverage:
 
 build:
 	@echo "Make: Building package..."
+	@python3 -m pip install build
 	@python3 -m build --wheel
 
-upload:
+upload: build
 	@echo "Make: Uploading package..."
 	@twine upload dist/*
 	@rm -rf dist

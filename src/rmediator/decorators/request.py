@@ -1,3 +1,4 @@
+from types import UnionType
 from typing import Annotated, Union
 
 from typing_extensions import Doc
@@ -5,7 +6,7 @@ from typing_extensions import Doc
 
 def request(
     response_type: Annotated[
-        Union[type, None],
+        Union[type, UnionType, None],
         Doc(
             "The type of the response expected from the request, or None if no response is expected."
         ),

@@ -34,4 +34,4 @@ class RequestHandler(Generic[TRequest, TResponse], ABC):
         Returns:
             TResponse: The response from the handler.
         """
-        pass
+        ...

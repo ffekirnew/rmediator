@@ -10,8 +10,7 @@ class TestRequestHandler:
         with pytest.raises(AttributeError):
 
             @request_handler(get_valid_request, get_response)
-            class InvalidRequestHandler:
-                pass
+            class InvalidRequestHandler: ...
 
     def test__request_handler__request_type_mismatch__raises_value_error(
         self, get_valid_request, get_response
@@ -20,8 +19,7 @@ class TestRequestHandler:
 
             @request_handler(get_valid_request, get_response)
             class InvalidRequestHandler:
-                def handle(self, request: get_valid_request.response) -> None:
-                    pass
+                def handle(self, request: get_valid_request.response) -> None: ...
 
     def test__request_handler__response_type_mismatch__raises_value_error(
         self, get_valid_request, get_response
@@ -30,8 +28,7 @@ class TestRequestHandler:
 
             @request_handler(get_valid_request, get_response)
             class InvalidRequestHandler:
-                def handle(self, request: get_valid_request) -> get_valid_request:
-                    pass
+                def handle(self, request: get_valid_request) -> get_valid_request: ...
 
     def test__request_handler__none_type_request__raises_value_error(self):
         with pytest.raises(AttributeError):
@@ -46,16 +43,14 @@ class TestRequestHandler:
     ):
         @request_handler(get_valid_request, get_response)
         class ValidRequestHandler:
-            def handle(self, request: get_valid_request) -> get_response:
-                pass
+            def handle(self, request: get_valid_request) -> get_response: ...
 
     def test__request_handler__valid_handler_different_request_parameter_name__successful(
         self, get_valid_request, get_response
     ):
         @request_handler(get_valid_request, get_response)
         class ValidRequestHandler:
-            def handle(self, some_request: get_valid_request) -> get_response:
-                pass
+            def handle(self, some_request: get_valid_request) -> get_response: ...
 
     def test__request_handler__invalid_handler_request_parameter_wrong_type__successful(
         self, get_valid_request, get_response
@@ -64,8 +59,7 @@ class TestRequestHandler:
 
             @request_handler(get_valid_request, get_response)
             class InvalidRequestHandler:
-                def handle(self, some_request: str) -> get_response:
-                    pass
+                def handle(self, some_request: str) -> get_response: ...
 
     def test__request_handler__invalid_handler_multiple_parameters_in_handle__successful(
         self, get_valid_request, get_response
@@ -76,22 +70,19 @@ class TestRequestHandler:
             class InvalidRequestHandler:
                 def handle(
                     self, request: get_valid_request, additonal: int
-                ) -> get_response:
-                    pass
+                ) -> get_response: ...
 
 
 @pytest.fixture
 def get_valid_request(get_response):
     @request(get_response)
-    class Request:
-        pass
+    class Request: ...
 
     return Request
 
 
 @pytest.fixture
 def get_response():
-    class Response:
-        pass
+    class Response: ...
 
     return Response

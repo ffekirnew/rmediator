@@ -1,38 +1,31 @@
-from types import UnionType
-from typing import Annotated, Union
+from typing import Annotated, Callable, Optional, Type, TypeVar
 
 from typing_extensions import Doc
+
+T = TypeVar("T", bound=Type)
 
 
 def request(
     response_type: Annotated[
-        Union[type, UnionType, None],
+        Optional[Type],
         Doc(
-            "The type of the response expected from the request, or None if no response is expected."
+            "The expected response type for the request, or None if no response is expected."
         ),
     ]
-):
+) -> Callable[[T], T]:
     """
-    Decorate a class to register a request class with a specified response type.
+    Decorator to register a request class with a specified response type.
 
     Args:
-        response_type (Annotated[Union[type, None], Doc]): The type of the response expected from the request, or None if no response is expected.
+        response_type (Annotated[Optional[Type], Doc]): Expected response type or None.
 
     Returns:
-        decorator: The decorator function.
-
-    Example:
-    ```python
-    @request(ResponseType)
-    class MyRequest:
-        # Define the request class
-        pass
-    ```
+        Callable: A class decorator.
     """
 
-    def decorator(cls: type):
-        cls._response = response_type
-        cls._rmediator_decorated_request = True
+    def decorator(cls: T) -> T:
+        setattr(cls, "_response", response_type)
+        setattr(cls, "_rmediator_decorated_request", True)
 
         return cls
 

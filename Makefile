@@ -11,7 +11,7 @@ lint:
 
 test:
 	@echo "Make: Running tests..."
-	@pytest
+	@python -m pytest .
 
 test-coverage:
 	@echo "Make: Running tests with coverage..."

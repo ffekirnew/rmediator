@@ -99,6 +99,20 @@ class TestMediator:
                 get_valid_request, get_none_request_request_handler()
             )
 
+    def test__two_valid_request_handler__successful(
+        self,
+        mediator,
+        get_valid_request,
+        get_another_valid_request,
+        get_valid_request_handler_first_type,
+    ):
+        mediator.register_handler(
+            get_valid_request, get_valid_request_handler_first_type()
+        )
+        mediator.register_handler(
+            get_another_valid_request, get_valid_request_handler_first_type()
+        )
+
 
 @pytest.fixture
 def mediator():
@@ -107,8 +121,7 @@ def mediator():
 
 @pytest.fixture
 def get_response():
-    class Response:
-        pass
+    class Response: ...
 
     return Response
 
@@ -116,10 +129,17 @@ def get_response():
 @pytest.fixture
 def get_valid_request(get_response):
     @request(get_response)
-    class Request:
-        pass
+    class Request: ...
 
     return Request
+
+
+@pytest.fixture
+def get_another_valid_request(get_response):
+    @request(get_response)
+    class AnotherRequest: ...
+
+    return AnotherRequest
 
 
 @pytest.fixture
@@ -134,7 +154,7 @@ def get_undecorated_request(get_response):
 def get_valid_request_handler_first_type(get_valid_request, get_response):
     @request_handler(get_valid_request, get_response)
     class RequestHandler:
-        pass
+        ...
 
         def handle(self, request: get_valid_request) -> get_response:
             return get_response()
@@ -173,8 +193,7 @@ def get_valid_request_handler_second_type(get_valid_request, get_response):
         request = get_valid_request
         response = get_response
 
-        def handle(self, request: get_valid_request) -> get_response:
-            pass
+        def handle(self, request: get_valid_request) -> get_response: ...
 
     return RequestHandler
 
@@ -184,7 +203,6 @@ def get_valid_request_handler_third_type(get_valid_request, get_response):
     @request_handler(get_valid_request, None)
     class RequestHandler:
 
-        def handle(self, request: get_valid_request) -> None:
-            pass
+        def handle(self, request: get_valid_request) -> None: ...
 
     return RequestHandler

@@ -1,8 +1,10 @@
 import inspect
 from types import UnionType
-from typing import Annotated, Union
+from typing import Annotated, Callable, Type, TypeVar, Union
 
 from typing_extensions import Doc
+
+T = TypeVar("T", bound=Type)
 
 
 def request_handler(
@@ -15,7 +17,7 @@ def request_handler(
             "The type of the response that the handler should return, or None if no response is expected."
         ),
     ],
-):
+) -> Callable[[T], T]:
     """
     A decorator to register a request handler class with specified request and response types.
 
@@ -38,11 +40,11 @@ def request_handler(
     class MyHandler:
         def handle(self, request: RequestType) -> ResponseType:
             # Handle the request and return a response
-            pass
+            ...
     ```
     """
 
-    def decorator(cls: type):
+    def decorator(cls: T) -> T:
         if request_type is None:
             raise AttributeError(
                 f"Request handler class cannot be registered; request type cannot be {None}."
@@ -76,9 +78,9 @@ def request_handler(
                 f"Request handler class cannot be registered; {cls} handle method must have return type of {response_type}."
             )
 
-        cls._request = request_type
-        cls._response = response_type
-        cls._rmediator_decorated_request_handler = True
+        setattr(cls, "_request", request_type)
+        setattr(cls, "_response", response_type)
+        setattr(cls, "_rmediator_decorated_request", True)
 
         return cls
 

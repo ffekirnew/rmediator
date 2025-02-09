@@ -31,7 +31,7 @@ class SomeResponse:
 # Define a request
 @request(SomeResponse)
 class SomeRequest:
-    pass
+    ...
 
 # Define a handler for the request
 @request_handler(SomeRequest, SomeResponse)

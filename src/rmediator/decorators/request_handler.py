@@ -80,7 +80,7 @@ def request_handler(
 
         setattr(cls, "_request", request_type)
         setattr(cls, "_response", response_type)
-        setattr(cls, "_rmediator_decorated_request", True)
+        setattr(cls, "_rmediator_decorated_request_handler", True)
 
         return cls
 

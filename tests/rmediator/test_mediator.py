@@ -154,8 +154,6 @@ def get_undecorated_request(get_response):
 def get_valid_request_handler_first_type(get_valid_request, get_response):
     @request_handler(get_valid_request, get_response)
     class RequestHandler:
-        ...
-
         def handle(self, request: get_valid_request) -> get_response:
             return get_response()
 

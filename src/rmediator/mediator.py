@@ -75,7 +75,7 @@ class Mediator(metaclass=SingletonMeta):
         handler = self._request_handlers.get(type(request))
         if not handler:
             raise ValueError(
-                f"Request cannot be handled; no handler has been registered for {type(request)}."
+                f"Request {type(request)} cannot be handled; no handler has been registered for {type(request)}."
             )
 
         return handler.handle(request)
@@ -102,12 +102,12 @@ class Mediator(metaclass=SingletonMeta):
             ValueError: If the handler's response type does not match the request's response type,
                         or if another handler for the same request type has already been registered.
         """
-        self.__check_request_validity(request_type)
-        self.__check_request_handler_validity(type(handler))
+        self._check_request_validity(request_type)
+        self._check_request_handler_validity(type(handler))
 
         if handler._response != request_type._response:  # type: ignore
             raise ValueError(
-                f"Handler cannot be registered; handler response {handler._response} does not match request response {request_type._response}."
+                f"Handler '{type(handler).__name__}' cannot be registered; handler response '{handler._response}' does not match request response '{request_type._response}'."
             )
 
         if request_type in self._request_handlers:
@@ -115,12 +115,12 @@ class Mediator(metaclass=SingletonMeta):
 
             if type(handler) is not type(old_handler):
                 raise ValueError(
-                    f"Handler cannot be registered; another handler for request type {request_type} has already been registered. Check {type(self._request_handlers[request_type])}."
+                    f"Handler '{type(handler).__name__}' cannot be registered; another handler for request type '{request_type.__name__}' has already been registered. Check '{type(self._request_handlers[request_type]).__name__}'."
                 )
 
         self._request_handlers[request_type] = handler
 
-    def __check_request_validity(self, request_type: type) -> None:
+    def _check_request_validity(self, request_type: type) -> None:
         """
         Checks if a request type has been decorated using @request.
 
@@ -132,10 +132,10 @@ class Mediator(metaclass=SingletonMeta):
         """
         if not hasattr(request_type, "_rmediator_decorated_request"):
             raise ValueError(
-                f"Handler cannot be registered; the request {request_type} class has not been decorated using @request."
+                f"Request cannot be registered; the request '{request_type.__name__}' class has not been decorated using @request."
             )
 
-    def __check_request_handler_validity(self, handler_type: type) -> None:
+    def _check_request_handler_validity(self, handler_type: type) -> None:
         """
         Checks if a request handler type has been decorated using @request_handler.
 
@@ -147,5 +147,5 @@ class Mediator(metaclass=SingletonMeta):
         """
         if not hasattr(handler_type, "_rmediator_decorated_request_handler"):
             raise ValueError(
-                f"Handler cannot be registered; the request handler {type(handler_type)} class has not been decorated using @request_handler."
+                f"Handler cannot be registered; the request handler '{handler_type.__name__}' class has not been decorated using @request_handler."
             )
